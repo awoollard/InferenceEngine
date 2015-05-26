@@ -13,10 +13,11 @@ namespace InferenceEngine
           //hello world
         }
 
-        void InstantiateTerms(List<string> statements)
+        List<Term> InstantiateTerms(List<string> statements)//returns a list of all terms in a list
         {
             string sTemp;
-            List<string> forRemoval = new List<string>(); 
+            List<string> forRemoval = new List<string>();
+            List<Term> Terms = new List<Term>();
 
             while (statements.Any())//until all statements have been analysed
             {
@@ -28,10 +29,11 @@ namespace InferenceEngine
 
                     foreach(string s2 in names)
                     {
-                        Term Term = new Term(s2, false); //somehow name each new term after the string. might have to create a 2d list.
+                        Terms.Add(new Term(s2, false));
                     }
                 }
             }
+            return Terms;
         }
     }
 }
