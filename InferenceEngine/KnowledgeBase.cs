@@ -9,44 +9,34 @@ namespace InferenceEngine
     class KnowledgeBase
     {
         // Bunch of variables stored privately here... ?
+        public List<Term> Terms = new List<Term>();
         public KnowledgeBase()
         {
 
         }
 
-        public bool tell(String tellStatement)
+        public bool tell(String tellStatements)
         {
             // Logic for querying here
             // Maybe this.InstantiateTerms(tellStatement); goes here or something
+
+            tellStatements = tellStatements.Replace(" ", "");
+
+            string[] delimiters = { "=>", "&",";"};
+            List<string> namesTemp = new List<string>(tellStatements.Split((delimiters), StringSplitOptions.RemoveEmptyEntries));
+            List<string> names = namesTemp.Distinct().ToList();
+
+            foreach(string s in names)
+            {
+                Terms.Add(new Term(s));
+            }
+
             return true;
         }
         public bool query(String queryString, String method)
         {
             // Logic for querying here
             return true;
-        }
-
-        public List<Term> InstantiateTerms(List<string> statements)//returns a list of all terms in a list
-        {
-            string sTemp;
-            List<string> forRemoval = new List<string>();
-            List<Term> Terms = new List<Term>();
-
-            while (statements.Any())//until all statements have been analysed
-            {
-                foreach (string s in statements) //examine every string in the list of statements
-                {
-                    sTemp = s.Replace(" ", ""); //remove spaces
-                    string[] delimiters = { "=>", "&" };
-                    string[] names = sTemp.Split((delimiters), StringSplitOptions.RemoveEmptyEntries);
-
-                    foreach (string s2 in names)
-                    {
-                        Terms.Add(new Term(s2, false));
-                    }
-                }
-            }
-            return Terms;
         }
     }
 }
