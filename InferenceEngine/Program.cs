@@ -19,20 +19,20 @@ namespace InferenceEngine
             List<string> forRemoval = new List<string>();
             List<Term> Terms = new List<Term>();
 
-            while (statements.Any())//until all statements have been analysed
-            {
                 foreach (string s in statements) //examine every string in the list of statements
                 {
                     sTemp = s.Replace(" ", ""); //remove spaces
                     string[] delimiters = { "=>", "&" };
-                    string[] names = sTemp.Split((delimiters), StringSplitOptions.RemoveEmptyEntries);
+                    //string[] namesTemp = sTemp.Split((delimiters), StringSplitOptions.RemoveEmptyEntries);
+                    List<string> namesTemp = new List<string>(sTemp.Split((delimiters), StringSplitOptions.RemoveEmptyEntries));
+                    List<string> names = namesTemp.Distinct().ToList();
 
                     foreach(string s2 in names)
                     {
-                        Terms.Add(new Term(s2, false));
+                            Terms.Add(new Term(s2));
                     }
                 }
-            }
+         
             return Terms;
         }
     }
