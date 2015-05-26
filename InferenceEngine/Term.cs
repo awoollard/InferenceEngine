@@ -8,17 +8,32 @@ namespace InferenceEngine
 {
     class Term
     {
-        public bool entailed = false;
-        public string name;
+        private bool entailed;
+        private string name;
     
         public Term()
         {
+            entailed = false;
             name = null;
         }
 
         public Term(string n)
         {
             name = n;
+        }
+
+        // getEntailed and setEntailed methods
+        public bool Entailed
+        {
+            get { return entailed; }
+            set { entailed = value; }
+        }
+
+        // getName and setName methods
+        public string Name
+        {
+            get { return name; }
+            set { name = value; }
         }
     }
 }
