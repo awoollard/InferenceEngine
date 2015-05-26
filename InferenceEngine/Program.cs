@@ -10,6 +10,14 @@ namespace InferenceEngine
     {
         static void Main(string[] args)
         {
+            if (args.Count() != 2)
+            {
+                Console.WriteLine("Invalid arguments.");
+                Console.WriteLine("Syntax: iengine method filename");
+            }
+
+            Initialiser init = new Initialiser();
+            init.parseFile(args[0], args[1]);
         }
     }
 }
