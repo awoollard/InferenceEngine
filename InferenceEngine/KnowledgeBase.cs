@@ -10,6 +10,7 @@ namespace InferenceEngine
     {
         // Bunch of variables stored privately here... ?
         public List<Term> Terms = new List<Term>();
+        public List<string> Statements = new List<string>();
         public KnowledgeBase()
         {
 
@@ -22,9 +23,21 @@ namespace InferenceEngine
 
             tellStatements = tellStatements.Replace(" ", "");
 
-            string[] delimiters = { "=>", "&",";"};
-            List<string> namesTemp = new List<string>(tellStatements.Split((delimiters), StringSplitOptions.RemoveEmptyEntries));
-            List<string> names = namesTemp.Distinct().ToList();
+
+            //add the statements to the appropriate list
+            string[] statementsDelimiter = { ";" };
+            List<string> statementsTemp = new List<string>(tellStatements.Split((statementsDelimiter), StringSplitOptions.RemoveEmptyEntries));
+            List<string> statements = statementsTemp.Distinct().ToList();
+
+            foreach(string s in statements)
+            {
+                Statements.Add(s);
+            }
+
+            //add terms to the appropriate list
+            string[] termDelimiters = { "=>", "&", ";"};//break the string into pieces between these things.
+            List<string> namesTemp = new List<string>(tellStatements.Split((termDelimiters), StringSplitOptions.RemoveEmptyEntries));//put into a list rather than string array to allow for duplicate removal
+            List<string> names = namesTemp.Distinct().ToList();//duplicate removal
 
             foreach(string s in names)
             {
