@@ -17,23 +17,29 @@ namespace InferenceEngine
             name = null;
         }
 
-        public Term(string n)
+        public Term(string name)
         {
-            name = n;
+            setName(name);
         }
 
-        // getEntailed and setEntailed methods
-        public bool Entailed
+        public bool isEntailed()
         {
-            get { return entailed; }
-            set { entailed = value; }
+            return entailed;
         }
 
-        // getName and setName methods
-        public string Name
+        public void setEntailed(bool isEntailed)
         {
-            get { return name; }
-            set { name = value; }
+            this.entailed = isEntailed;
+        }
+
+        public string getName()
+        {
+            return name;
+        }
+
+        public void setName(string name)
+        {
+            this.name = name;
         }
     }
 }

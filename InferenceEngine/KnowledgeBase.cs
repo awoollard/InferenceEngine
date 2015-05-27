@@ -9,47 +9,67 @@ namespace InferenceEngine
     class KnowledgeBase
     {
         // Bunch of variables stored privately here... ?
-        public List<Term> Terms = new List<Term>();
-        public List<string> Statements = new List<string>();
+        public List<Term> Terms;
+        public List<string> Statements;
         public KnowledgeBase()
         {
-
+            Terms = new List<Term>();
+            Statements = new List<string>();
         }
 
-        public bool tell(String tellStatements)
+        public void Tell(string tellStatements)
         {
-            // Logic for querying here
-            // Maybe this.InstantiateTerms(tellStatement); goes here or something
+            PopulateStatements(tellStatements);
+            PopulateTerms(tellStatements);
+        }
 
+        private void PopulateStatements(String tellStatements)
+        {
+            // Remove white-space
             tellStatements = tellStatements.Replace(" ", "");
-
-
-            //add the statements to the appropriate list
+            // Break the string into individual strings delimited by a semi-comma.
             string[] statementsDelimiter = { ";" };
-            List<string> statementsTemp = new List<string>(tellStatements.Split((statementsDelimiter), StringSplitOptions.RemoveEmptyEntries));
-            List<string> statements = statementsTemp.Distinct().ToList();
 
-            foreach(string s in statements)
-            {
-                Statements.Add(s);
-            }
-
-            //add terms to the appropriate list
-            string[] termDelimiters = { "=>", "&", ";"};//break the string into pieces between these things.
-            List<string> namesTemp = new List<string>(tellStatements.Split((termDelimiters), StringSplitOptions.RemoveEmptyEntries));//put into a list rather than string array to allow for duplicate removal
-            List<string> names = namesTemp.Distinct().ToList();//duplicate removal
-
-            foreach(string s in names)
-            {
-                Terms.Add(new Term(s));
-            }
-
-            return true;
+            foreach (
+                string statement in
+                    tellStatements.Split((statementsDelimiter), StringSplitOptions.RemoveEmptyEntries).Distinct().ToList()
+            )
+                Statements.Add(statement);
         }
-        public bool query(String queryString, String method)
+
+        private void PopulateTerms(String tellStatements)
+        {
+            // Break the string into individual strings delimited by the following symbols.
+            string[] termDelimiters = { "=>", "&", ";" };
+
+            // A list is used rather than a string array to allow for duplicate removal
+            foreach (
+                string statement in
+                    tellStatements.Split((termDelimiters), StringSplitOptions.RemoveEmptyEntries).Distinct().ToList()
+            )
+                Terms.Add(new Term(statement));
+        }
+
+        public bool Query(String queryString, String method)
         {
             // Logic for querying here
-            return true;
+            if (method.ToUpper().Equals("FC"))
+            {
+                // Invoke FC class here
+                return true;
+            }
+            else if (method.ToUpper().Equals("BC"))
+            {
+                // Invoke BC class here
+                return true;
+            }
+            else
+            {
+                // Query neither FC or BC so unsupported
+                // Returning false here is probably not the best idea
+                // TODO: Should raise an exception but too lazy
+                return false;
+            }
         }
 
         public bool JMethod(Term q)
@@ -77,56 +97,48 @@ namespace InferenceEngine
                         Term impliedTerm = new Term("rightTerm");
 
                         //the implied term takes the entailed value of the implying term
-                        FetchTerm(implication[1]).Entailed = FetchTerm(implication[0]).Entailed;
+                        FetchTerm(implication[1]).setEntailed(FetchTerm(implication[0]).isEntailed());
                         impliedTerm = FetchTerm(implication[1]);
 
                         //entailment established, therefore, statement s no longer needed
-                        if (FetchTerm(implication[1]).Entailed)
+                        if (FetchTerm(implication[1]).isEntailed())
                         {
                             forRemoval.Add(s);
                         }
 
-                        if(impliedTerm.Entailed)
+                        if(impliedTerm.isEntailed())
                         {
-                            q.Entailed = true;
+                            q.setEntailed(true);
                         }
                     }
                 }
 
-                if((q.Entailed==true)||(!forRemoval.Any()))//when q is entailed or no new implications have been made
+                if(q.isEntailed() || !forRemoval.Any())//when q is entailed or no new implications have been made
                 {
                     allChecked = true;
                 }
 
-                foreach (string s in forRemoval)//remove marked statements
+                foreach (string statement in forRemoval)//remove marked statements
                 {
-                    Statements.Remove(s);
-                    forRemoval.Remove(s);
+                    Statements.Remove(statement);
+                    forRemoval.Remove(statement);
                 }
             }
-            return q.Entailed;
+            return q.isEntailed();
         }
 
-        public void SetEntailed(string name)//finds the term with the given name and sets it's Entailed value to true
+        public void SetEntailed(string name)
         {
-            foreach (Term t in Terms)
-            {
-                if (t.Name == name)
-                {
-                    t.Entailed = true;
-                }
-            }
+            foreach (Term term in Terms)
+                if (term.getName() == name)
+                    term.setEntailed(true);
         }
 
         public Term FetchTerm(string name)
         {
-            foreach(Term t in Terms)
-            {
-                if(t.Name == name)
-                {
-                    return t;
-                }
-            }
+            foreach (Term term in Terms)
+                if (term.getName() == name)
+                    return term;
             return null;
         }
     }

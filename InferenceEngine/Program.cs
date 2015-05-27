@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InferenceEngine
 {
@@ -15,8 +12,11 @@ namespace InferenceEngine
                 Console.WriteLine("Invalid arguments.");
                 Console.WriteLine("Syntax: iengine method filename");
             }
-            Initialiser initialiser = new Initialiser();
-            initialiser.parseFile(args[0], args[1]);
+
+            FileHandler fileHandler = new FileHandler();
+            fileHandler.ReadFile(args[1]);
+            fileHandler.FeedKnowledgeBase();
+            fileHandler.QueryKnowledgeBase(args[0]);
         }
     }
 }
