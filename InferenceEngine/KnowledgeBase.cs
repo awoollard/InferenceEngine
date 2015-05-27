@@ -130,14 +130,14 @@ namespace InferenceEngine
         public void SetEntailed(string name)
         {
             foreach (Term term in Terms)
-                if (term.getName() == name)
+                if (term.getName().Equals(name))
                     term.setEntailed(true);
         }
 
         public Term FetchTerm(string name)
         {
             foreach (Term term in Terms)
-                if (term.getName() == name)
+                if (term.getName().Equals(name))
                     return term;
             return null;
         }
