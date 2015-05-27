@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace InferenceEngine
 {
+    // KnowledgeBase.cs: Stores terms and statements, and instantiates the required methods for FC/BC/TT.
     class KnowledgeBase
     {
         // Bunch of variables stored privately here... ?
-        public List<Term> Terms;
-        public List<string> Statements;
+        private List<string> Statements;
+        private List<Term> Terms;
         public KnowledgeBase()
         {
             Terms = new List<Term>();
@@ -50,26 +51,48 @@ namespace InferenceEngine
                 Terms.Add(new Term(statement));
         }
 
-        public bool Query(String queryString, String method)
+        public string Query(String query, String method)
         {
-            // Logic for querying here
+            bool queryEntailable = false;
+            string returnString = null;
+
             if (method.ToUpper().Equals("FC"))
             {
-                // Invoke FC class here
-                return true;
+                ForwardChain forwardChain = new ForwardChain(this.Statements, this.Terms);
+                queryEntailable = forwardChain.Query(query);
+                if (queryEntailable)
+                {
+                    returnString = "YES: " + forwardChain.GetTermsOrWhatever();
+                }
             }
             else if (method.ToUpper().Equals("BC"))
             {
-                // Invoke BC class here
-                return true;
+                BackwardsChain backwardsChain = new BackwardsChain(this.Statements, this.Terms);
+                queryEntailable = backwardsChain.Query(query);
+                if (queryEntailable)
+                {
+                    returnString = "YES: " + backwardsChain.GetTermsOrWhatever();
+                }
+            }
+            else if (method.ToUpper().Equals("TT"))
+            {
+                TruthTable truthTable = new TruthTable(this.Statements, this.Terms);
+                queryEntailable = truthTable.Query(query);
+                if (queryEntailable)
+                {
+                    returnString = "YES: " + truthTable.HowManyTermsOrWhatever().ToString();
+                }
             }
             else
             {
-                // Query neither FC or BC so unsupported
-                // Returning false here is probably not the best idea
-                // TODO: Should raise an exception but too lazy
-                return false;
+                // TODO: Verify this is the best approach
+                returnString = "Unsupported method";
             }
+
+            if (!queryEntailable)
+                returnString = "NO";
+
+            return returnString;
         }
 
         public bool JMethod(Term q)

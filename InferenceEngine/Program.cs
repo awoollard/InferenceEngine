@@ -3,6 +3,7 @@ using System.Linq;
 
 namespace InferenceEngine
 {
+    // Program.cs: Handles console output.
     class Program
     {
         static void Main(string[] args)
@@ -13,10 +14,10 @@ namespace InferenceEngine
                 Console.WriteLine("Syntax: iengine method filename");
             }
 
-            FileHandler fileHandler = new FileHandler();
-            fileHandler.ReadFile(args[1]);
-            fileHandler.FeedKnowledgeBase();
-            fileHandler.QueryKnowledgeBase(args[0]);
+            KnowledgeBase knowledgeBase = new KnowledgeBase();
+            FileHandler fileHandler = new FileHandler(args[1]);
+            fileHandler.FeedKnowledgeBase(knowledgeBase);
+            Console.WriteLine(fileHandler.QueryKnowledgeBase(args[0], knowledgeBase));
         }
     }
 }

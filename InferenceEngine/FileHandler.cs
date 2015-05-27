@@ -8,22 +8,17 @@ using System.Threading.Tasks;
 
 namespace InferenceEngine
 {
+    // FileHandler.cs: Reads the input file, feeds and queries the knowledge base depending on file input.
     class FileHandler
     {
-        private KnowledgeBase knowledgeBase;
         private string fileContents;
 
-        public FileHandler()
-        {
-            knowledgeBase = new KnowledgeBase();
-        }
-
-        public void ReadFile(string fileName)
+        public FileHandler(string fileName)
         {
             fileContents = File.ReadAllText(fileName);
         }
 
-        public void FeedKnowledgeBase()
+        public void FeedKnowledgeBase(KnowledgeBase knowledgeBase)
         {
             bool nextLineIsTellStatement = false;
             foreach (
@@ -44,9 +39,11 @@ namespace InferenceEngine
             }
         }
 
-        public void QueryKnowledgeBase(string method)
+        public string QueryKnowledgeBase(string method, KnowledgeBase knowledgeBase)
         {
             bool nextLineIsQuery = false;
+            string returnString = null;
+
             foreach (
                 string fileLine in
                     fileContents.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
@@ -59,10 +56,11 @@ namespace InferenceEngine
 
                 if (nextLineIsQuery)
                 {
-                    knowledgeBase.Query(fileLine, method);
+                    returnString = knowledgeBase.Query(fileLine, method);
                     nextLineIsQuery = false;
                 }
             }
+            return returnString;
         }
     }
 }
