@@ -15,6 +15,8 @@ namespace InferenceEngine
                 Console.WriteLine("Invalid arguments.");
                 Console.WriteLine("Syntax: iengine method filename");
             }
+            Initialiser initialiser = new Initialiser();
+            initialiser.parseFile(args[0], args[1]);
         }
     }
 }

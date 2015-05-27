@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,7 +17,16 @@ namespace InferenceEngine
         public void parseFile(String method, String fileName)
         {
             KnowledgeBase knowledgeBase = new KnowledgeBase();
-            System.IO.StreamReader file = new System.IO.StreamReader(fileName);
+            System.IO.StreamReader file;
+            try
+            {
+                file = new System.IO.StreamReader(fileName);
+            }
+            catch (IOException)
+            {
+                Console.WriteLine("Error: IOException caught while opening file - check file exists");
+                return;
+            }
             String fileLine;
             while ((fileLine = file.ReadLine()) != null)
             {
