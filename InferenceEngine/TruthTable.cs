@@ -17,7 +17,7 @@ namespace InferenceEngine
             this.Terms = terms;
         }
 
-        public bool Query(string query)
+        public bool Query(Term query)
         {
             return true;
         }

@@ -2,12 +2,11 @@
 {
     class Term
     {
-        private bool entailed;
+        private bool entailed = false;
         private string name;
     
         public Term()
         {
-            entailed = false;
             name = null;
         }
 
