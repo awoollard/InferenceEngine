@@ -19,6 +19,12 @@ namespace InferenceEngine
 
         public bool Query(Term query)
         {
+            //initial ideas
+            //is query entailed?
+            //yes: done, no: check for statements with query on RHS
+            //Add LHS terms to entailed required list
+            //repeat this process for each term in entailed required list
+
             return true;
         }
 
