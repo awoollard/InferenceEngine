@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-
+using System;
 namespace InferenceEngine
 {
     /* BackwardsChain.cs: Takes the statements and terms from knowledgebase and does operations
@@ -10,6 +10,7 @@ namespace InferenceEngine
     {
         private List<string> Statements;
         private List<Term> Terms;
+        private List<Term> entailRequired = new List<Term>();
 
         public BackwardsChain(List<string> statements, List<Term> terms)
         {
@@ -19,18 +20,108 @@ namespace InferenceEngine
 
         public bool Query(Term query)
         {
-            //initial ideas
-            //is query entailed?
-            //yes: done, no: check for statements with query on RHS
-            //Add LHS terms to entailed required list
-            //repeat this process for each term in entailed required list
+            //Query
+            //-----
+            //looks at all the terms which need entailing to reach q (starting with q), 
+            //it checks for statements where term t is implied.
+            //if statement is single term t, t set to entailed.
+            //if not, LHS terms are linked as parents to t, t is set as child to LHS terms(to allow entailment chains later)
+            //adds the LHS of that statement to entailRequired.
+            //removes statement from Statements
 
+            //Does add multiple parents for one term but doesnt support "&" yet.
+
+            //***to add: in a different loop?: need to check entailRequired for entailed terms.
+            //remove entailed terms from entailRequired and make their children entailed
+            //(since at this stage only "=>" is supported, multiple parents need not be considered)
+
+            List<Term> forRemoval = new List<Term>();
+            List<Term> forAddition = new List<Term>();
+            List<string> statementRemoval = new List<string>();
+
+            entailRequired.Add(query);
+
+            while(!query.isEntailed())//this while loop is insufficient, need some condition for when we're sure query cant be known
+            {
+                foreach(Term t in entailRequired)
+                {
+                    foreach(string statement in Statements)
+                    {
+                        string[] termDelimiters = { "=>", "&" };//break the string into pieces between these things.
+                        string[] implication = statement.Split((termDelimiters), StringSplitOptions.RemoveEmptyEntries);//StringSplitOptions.RemoveEmptyEntries
+                        int termCount = implication.Length;
+                    
+                        if(termCount<2)
+                        {
+                            t.setEntailed(true);
+                        }
+                        else
+                        {
+                            if(implication[implication.Length-1]==t.getName())//if RHS is term t
+                            {
+                                //Add non-entailed terms on LHS to entailRequired
+                                for (int i = 0; i < (termCount - 1); i++)
+                                {
+                                    FetchTerm(implication[i]).setChild(t); //set up parent child link
+                                    t.setParent(FetchTerm(implication[i]));
+
+                                    if (!FetchTerm(implication[i]).isEntailed())
+                                    {
+                                        forAddition.Add(FetchTerm(implication[i]));
+                                    }
+                                    else
+                                    {
+                                        t.setEntailed(true);
+                                        forRemoval.Add(t);
+                                    }
+                                }
+                                statementRemoval.Add(statement);
+                            }
+                        }
+                    }
+                }
+
+                foreach (Term t in forAddition)//remove marked statements
+                {
+                    entailRequired.Add(t);
+                }
+                forRemoval.Clear();
+
+                foreach (Term t in forRemoval)//remove marked statements
+                {
+                    entailRequired.Remove(t);
+                }
+                forRemoval.Clear();
+
+                foreach (string statement in statementRemoval)//remove marked statements
+                {
+                    Statements.Remove(statement);
+                }
+                statementRemoval.Clear();
+            }
             return true;
+        }
+
+        public Term FetchTerm(string name)
+        {
+            foreach (Term term in Terms)
+                if (term.getName() == name)//if (term.getName().Equals(name))
+                    return term;
+            return null;
         }
 
         public string GetTermsOrWhatever()
         {
-            return "a, b, c";
+            string returnString = " ";
+
+            foreach (Term t in Terms)
+            {
+                if (t.isEntailed())
+                {
+                    returnString = returnString + t.getName() + ", ";
+                }
+            }
+            return returnString;
         }
     }
 }

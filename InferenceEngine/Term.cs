@@ -4,6 +4,8 @@
     {
         private bool entailed = false;
         private string name;
+        private Term child;
+        private Term parent;
     
         public Term()
         {
@@ -11,6 +13,11 @@
         }
 
         public Term(string name)
+        {
+            setName(name);
+        }
+
+        public Term(string name,Term child)
         {
             setName(name);
         }
@@ -33,6 +40,24 @@
         public void setName(string name)
         {
             this.name = name;
+        }
+
+        public void setChild(Term t)
+        {
+            this.child = t;
+        }
+        public Term getChild()
+        {
+            return child;
+        }
+
+        public void setParent(Term t)
+        {
+            this.parent = t;
+        }
+        public Term getParent()
+        {
+            return parent;
         }
     }
 }
