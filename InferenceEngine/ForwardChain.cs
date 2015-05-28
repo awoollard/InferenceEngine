@@ -27,36 +27,36 @@ namespace InferenceEngine
 
             while (allChecked == false)
             {
-                foreach (string s in Statements)//need to add some mechanism for terminating the method when q is entailed or cant be entailed
+                foreach (string s in Statements)
                 {
-                    if (!s.Contains("=>") && !s.Contains("&"))//if the statement is a single term set the term with that name to entailed
+                    if (!s.Contains("=>") && !s.Contains("&"))//if the statement is a single term, set the term with that name to entailed
                     {
                         SetEntailed(s);
                         forRemoval.Add(s);
                     }
                     else //checks LHS terms entailed status and infer RHS entailed status. 
-                    //CURRENTLY ONLY WORKS WITH SINGLE TERM ON LHS (no "&")
                     {
                         string[] termDelimiters = { "=>", "&" };//break the string into pieces between these things.
                         string[] implication = s.Split((termDelimiters),StringSplitOptions.RemoveEmptyEntries);//StringSplitOptions.RemoveEmptyEntries
+                        int termCount = implication.Length;
+                        int entailedTerms = 0;
 
-                        //"FetchTerm(implication[1]).Entailed" effectively refers to the RHS of the implication
-                        Term impliedTerm = new Term("rightTerm");
-
-                        //the implied term takes the entailed value of the implying term
-                        FetchTerm(implication[1]).setEntailed(FetchTerm(implication[0]).isEntailed());
-                        impliedTerm = FetchTerm(implication[1]);
-
-                        //entailment established, therefore, statement s no longer needed
-                        if (FetchTerm(implication[1]).isEntailed())
+                        //check if the LHS terms are entailed.
+                        for (int i = 0; i < termCount; i++)
                         {
+                            if(FetchTerm(implication[i]).isEntailed())
+                            {
+                                entailedTerms++;
+                            }
+                        }
+
+                        //if all the LHS terms are entailed, set the RHS to entailed
+                        if(entailedTerms == (termCount-1))
+                        {
+                            FetchTerm(implication[termCount - 1]).setEntailed(true);
                             forRemoval.Add(s);
                         }
 
-                        if (impliedTerm.isEntailed())
-                        {
-                            query.setEntailed(true);
-                        }
                     }
                 }
 
@@ -91,7 +91,16 @@ namespace InferenceEngine
 
         public string GetTermsOrWhatever()
         {
-            return "a, b, c";
+            string returnString = " ";
+
+            foreach(Term t in Terms)
+            {
+                if(t.isEntailed())
+                {
+                    returnString = returnString + t.getName() + ", ";
+                }
+            }
+            return returnString;
         }
     }
 }

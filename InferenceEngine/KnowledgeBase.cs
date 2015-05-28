@@ -49,7 +49,7 @@ namespace InferenceEngine
                 Terms.Add(new Term(statement));
         }
 
-        public bool Query(string q, string method)
+        public string Query(string q, string method)
         {
             Term query = new Term(q);
             string returnString = null;
@@ -90,7 +90,7 @@ namespace InferenceEngine
             if (!query.isEntailed())
                 returnString = "NO";
 
-            return query.isEntailed();
+            return returnString;
         }      
     }
 }
