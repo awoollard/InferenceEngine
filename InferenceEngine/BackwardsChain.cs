@@ -5,20 +5,18 @@ namespace InferenceEngine
     /* BackwardsChain.cs: Takes the statements and terms from knowledgebase and does operations
      * Query returns whether or not the supplied query is entailable.
      * There is a seperate function for getting the entailable terms or whatever the case may be.
-     */ 
-    class BackwardsChain
+     */
+    class BackwardsChain : Method
     {
-        private List<string> Statements;
-        private List<Term> Terms;
         private List<Term> entailRequired = new List<Term>();
 
         public BackwardsChain(List<string> statements, List<Term> terms)
+            : base(statements, terms)
         {
-            this.Statements = statements;
-            this.Terms = terms;
+            // No custom functionality in constructor; inherits Method constructor
         }
 
-        public bool Query(Term query)
+        public override bool Query(Term query)
         {
             //Query
             //-----
@@ -100,28 +98,6 @@ namespace InferenceEngine
                 statementRemoval.Clear();
             }
             return true;
-        }
-
-        public Term FetchTerm(string name)
-        {
-            foreach (Term term in Terms)
-                if (term.getName() == name)//if (term.getName().Equals(name))
-                    return term;
-            return null;
-        }
-
-        public string GetTermsOrWhatever()
-        {
-            string returnString = " ";
-
-            foreach (Term t in Terms)
-            {
-                if (t.isEntailed())
-                {
-                    returnString = returnString + t.getName() + ", ";
-                }
-            }
-            return returnString;
         }
     }
 }

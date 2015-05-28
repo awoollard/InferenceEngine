@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace InferenceEngine
 {
@@ -6,18 +7,15 @@ namespace InferenceEngine
      * Query returns whether or not the supplied query is entailable.
      * There is a seperate function for getting the amount of entailable terms or whatever the case may be.
      */ 
-    class TruthTable
+    class TruthTable : Method
     {
-        private List<string> Statements;
-        private List<Term> Terms;
-
         public TruthTable(List<string> statements, List<Term> terms)
+            : base(statements, terms)
         {
-            this.Statements = statements;
-            this.Terms = terms;
+            // No custom functionality in constructor; inherits Method constructor
         }
 
-        public bool Query(Term query)
+        public override bool Query(Term query)
         {
             return true;
         }
@@ -25,6 +23,13 @@ namespace InferenceEngine
         public int HowManyTermsOrWhatever()
         {
             return 42;
+        }
+
+        public override string GetTermsOrWhatever()
+        {
+            // Doesn't need to be implemented in TT but should be overridden in case this method is ever called
+            // Maybe just delete this once coding is completed and we're sure it's never called
+            throw new NotImplementedException();
         }
     }
 }

@@ -7,18 +7,15 @@ namespace InferenceEngine
      * Query returns whether or not the supplied query is entailable.
      * There is a seperate function for getting the entailable terms or whatever the case may be.
      */ 
-    class ForwardChain
+    class ForwardChain : Method
     {
-        private List<string> Statements;
-        private List<Term> Terms;
-
         public ForwardChain(List<string> statements, List<Term> terms)
+            : base(statements, terms)
         {
-            this.Statements = statements;
-            this.Terms = terms;
+            // No custom functionality in constructor; inherits Method constructor
         }
 
-        public bool Query(Term query)//doesn't need to be bool, since now a term is passed it, entailed can be checked externally
+        public override bool Query(Term query)//doesn't need to be bool, since now a term is passed it, entailed can be checked externally
         {
 
             List<string> forRemoval = new List<string>(); //Allows marking statements for removal inside the foreach loop
@@ -79,35 +76,6 @@ namespace InferenceEngine
                 forRemoval.Clear();
             }
             return query.isEntailed();
-        }
-
-        public void SetEntailed(string name)
-        {
-            foreach (Term term in Terms)
-                if (term.getName().Equals(name))
-                    term.setEntailed(true);
-        }
-
-        public Term FetchTerm(string name)
-        {
-            foreach (Term term in Terms)
-                if (term.getName() == name)//if (term.getName().Equals(name))
-                    return term;
-            return null;
-        }
-
-        public string GetTermsOrWhatever()
-        {
-            string returnString = " ";
-
-            foreach(Term t in Terms)
-            {
-                if(t.isEntailed())
-                {
-                    returnString = returnString + t.getName() + ", ";
-                }
-            }
-            return returnString;
         }
     }
 }
