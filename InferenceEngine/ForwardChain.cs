@@ -42,7 +42,7 @@ namespace InferenceEngine
                         int entailedTerms = 0;
 
                         //check if the LHS terms are entailed.
-                        for (int i = 0; i < termCount; i++)
+                        for (int i = 0; i < (termCount-1); i++)
                         {
                             if(FetchTerm(implication[i]).isEntailed())
                             {
@@ -55,9 +55,16 @@ namespace InferenceEngine
                         {
                             FetchTerm(implication[termCount - 1]).setEntailed(true);
                             forRemoval.Add(s);
+
+                            if (FetchTerm(implication[termCount - 1]).getName() == query.getName())
+                            {
+                                query.setEntailed(true);
+                            }
                         }
 
                     }
+
+                    
                 }
 
                 if (query.isEntailed() || (forRemoval.Count==0))//when q is entailed or no new implications have been made
@@ -68,8 +75,8 @@ namespace InferenceEngine
                 foreach (string statement in forRemoval)//remove marked statements
                 {
                     Statements.Remove(statement);
-                    forRemoval.Remove(statement);
                 }
+                forRemoval.Clear();
             }
             return query.isEntailed();
         }
@@ -84,7 +91,7 @@ namespace InferenceEngine
         public Term FetchTerm(string name)
         {
             foreach (Term term in Terms)
-                if (term.getName().Equals(name))
+                if (term.getName() == name)//if (term.getName().Equals(name))
                     return term;
             return null;
         }

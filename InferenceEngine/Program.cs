@@ -18,6 +18,10 @@ namespace InferenceEngine
             FileHandler fileHandler = new FileHandler(args[1]);
             fileHandler.FeedKnowledgeBase(knowledgeBase);
             Console.WriteLine(fileHandler.QueryKnowledgeBase(args[0], knowledgeBase));
+
+            //gives user time to read output
+            Console.WriteLine("done");
+            Console.ReadLine();
         }
     }
 }

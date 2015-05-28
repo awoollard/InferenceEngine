@@ -22,7 +22,7 @@ namespace InferenceEngine
             PopulateTerms(tellStatements);
         }
 
-        private void PopulateStatements(String tellStatements)
+        private void PopulateStatements(string tellStatements)
         {
             // Remove white-space
             tellStatements = tellStatements.Replace(" ", "");
@@ -36,8 +36,10 @@ namespace InferenceEngine
                 Statements.Add(statement);
         }
 
-        private void PopulateTerms(String tellStatements)
+        private void PopulateTerms(string tellStatements)
         {
+            // Remove white-space
+            tellStatements = tellStatements.Replace(" ", "");
             // Break the string into individual strings delimited by the following symbols.
             string[] termDelimiters = { "=>", "&", ";" };
 
@@ -46,7 +48,14 @@ namespace InferenceEngine
                 string statement in
                     tellStatements.Split((termDelimiters), StringSplitOptions.RemoveEmptyEntries).Distinct().ToList()
             )
-                Terms.Add(new Term(statement));
+            {
+                //duplicate protection
+                Term temp = new Term(statement);
+                if(!Terms.Contains(temp))
+                {
+                    Terms.Add(temp);
+                }
+            }
         }
 
         public string Query(string q, string method)
