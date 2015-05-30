@@ -3,6 +3,7 @@
     class Term
     {
         private bool entailed = false;
+        private bool explored = false;
         private string name;
         private Term child;
         private Term parent;
@@ -58,6 +59,15 @@
         public Term getParent()
         {
             return parent;
+        }
+        public bool isExplored()
+        {
+            return explored;
+        }
+
+        public void setExplored(bool isExplored)
+        {
+            explored = isExplored;
         }
     }
 }

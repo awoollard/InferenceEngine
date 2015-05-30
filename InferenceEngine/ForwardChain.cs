@@ -20,9 +20,9 @@ namespace InferenceEngine
 
             List<string> forRemoval = new List<string>(); //Allows marking statements for removal inside the foreach loop
                                                           //Anytime a new entailment is established, the current statement should be added to this list
-            bool allChecked = false;
+            bool checkComplete = false;
 
-            while (allChecked == false)
+            while (checkComplete == false)
             {
                 foreach (string s in Statements)
                 {
@@ -60,13 +60,11 @@ namespace InferenceEngine
                         }
 
                     }
-
-                    
                 }
 
                 if (query.isEntailed() || (forRemoval.Count==0))//when q is entailed or no new implications have been made
                 {
-                    allChecked = true;
+                    checkComplete = true;
                 }
 
                 foreach (string statement in forRemoval)//remove marked statements

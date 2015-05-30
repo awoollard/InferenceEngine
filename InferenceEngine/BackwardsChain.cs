@@ -32,14 +32,15 @@ namespace InferenceEngine
             //***to add: in a different loop?: need to check entailRequired for entailed terms.
             //remove entailed terms from entailRequired and make their children entailed
             //(since at this stage only "=>" is supported, multiple parents need not be considered)
+            //when we do implement multi parents we can do something like foreach (parent p in term.parents){//test for entailed}
 
             List<Term> forRemoval = new List<Term>();
             List<Term> forAddition = new List<Term>();
             List<string> statementRemoval = new List<string>();
-
+            bool checkComplete = false;
             entailRequired.Add(query);
 
-            while(!query.isEntailed())//this while loop is insufficient, need some condition for when we're sure query cant be known
+            while(!checkComplete)
             {
                 foreach(Term t in entailRequired)
                 {
@@ -48,56 +49,85 @@ namespace InferenceEngine
                         string[] termDelimiters = { "=>", "&" };//break the string into pieces between these things.
                         string[] implication = statement.Split((termDelimiters), StringSplitOptions.RemoveEmptyEntries);//StringSplitOptions.RemoveEmptyEntries
                         int termCount = implication.Length;
+
+                        Term rhsTerm = FetchTerm(implication[implication.Length - 1]);
                     
                         if(termCount<2)
                         {
-                            t.setEntailed(true);
+                            rhsTerm.setEntailed(true);
+                            rhsTerm.setExplored(true);
+                            if(!statementRemoval.Contains(statement)) statementRemoval.Add(statement);
                         }
                         else
                         {
-                            if(implication[implication.Length-1]==t.getName())//if RHS is term t
+                            
+                            if (rhsTerm.getName() == t.getName())//if RHS is term t
                             {
+                                rhsTerm.setExplored(true);
+                                if (!forRemoval.Contains(rhsTerm)) forRemoval.Add(rhsTerm);
+
                                 //Add non-entailed terms on LHS to entailRequired
                                 for (int i = 0; i < (termCount - 1); i++)
                                 {
-                                    FetchTerm(implication[i]).setChild(t); //set up parent child link
-                                    t.setParent(FetchTerm(implication[i]));
-
-                                    if (!FetchTerm(implication[i]).isEntailed())
-                                    {
-                                        forAddition.Add(FetchTerm(implication[i]));
-                                    }
-                                    else
-                                    {
-                                        t.setEntailed(true);
-                                        forRemoval.Add(t);
-                                    }
+                                    //set up parent child link
+                                    FetchTerm(implication[i]).setChild(t); 
+                                    rhsTerm.setParent(FetchTerm(implication[i]));
+                                    forAddition.Add(FetchTerm(implication[i]));
                                 }
-                                statementRemoval.Add(statement);
+                                statementRemoval.Add(statement);//expansion complete, statement no longer needed
                             }
                         }
                     }
                 }
 
-                foreach (Term t in forAddition)//remove marked statements
+                applyEntailment();
+
+                if (FetchTerm(query.getName()).isEntailed() || (statementRemoval.Count == 0))//when q is entailed or no new implications have been made
+                {
+                    checkComplete = true;
+                }
+
+                //add new terms to entailRequired
+                foreach (Term t in forAddition)
                 {
                     entailRequired.Add(t);
                 }
-                forRemoval.Clear();
+                forAddition.Clear();
 
-                foreach (Term t in forRemoval)//remove marked statements
+                //remove marked terms
+                foreach (Term t in forRemoval)//issues here, doesnt remove d? seems to create a new instance of entailREquired and doesnt edit it
                 {
-                    entailRequired.Remove(t);
+                    this.entailRequired.Remove(t);
                 }
                 forRemoval.Clear();
 
-                foreach (string statement in statementRemoval)//remove marked statements
+                //remove marked statements
+                foreach (string statement in statementRemoval)
                 {
                     Statements.Remove(statement);
                 }
                 statementRemoval.Clear();
+
             }
-            return true;
+            return query.isEntailed();
+        }
+
+        private void applyEntailment()//any term without a parent or an entailed parent becomes entailed
+        {
+            foreach (Term t in Terms)
+            {
+                if (!t.isEntailed())
+                {
+                    if ((t.getParent() != null) && t.getParent().isEntailed())
+                    {
+                        t.setEntailed(true);
+                    }
+                }
+                else if ((t.getChild() != null))
+                {
+                    t.getChild().setEntailed(true);
+                }
+            }
         }
     }
 }
