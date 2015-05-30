@@ -19,7 +19,7 @@ namespace InferenceEngine
             fileHandler.FeedKnowledgeBase(knowledgeBase);
             Console.WriteLine(fileHandler.QueryKnowledgeBase(args[0], knowledgeBase));
 
-            //gives user time to read output
+            //give user time to read output
             Console.WriteLine("done");
             Console.ReadLine();
         }
