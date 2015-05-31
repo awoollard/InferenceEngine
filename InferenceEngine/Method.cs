@@ -18,14 +18,14 @@ namespace InferenceEngine
         virtual public void SetEntailed(string name)
         {
             foreach (Term term in Terms)
-                if (term.getName().Equals(name))
-                    term.setEntailed(true);
+                if (term.GetName().Equals(name))
+                    term.SetEntailed(true);
         }
 
         virtual public Term FetchTerm(string name)
         {
             foreach (Term term in Terms)
-                if (term.getName().Equals(name))
+                if (term.GetName().Equals(name))
                     return term;
             return null;
         }
@@ -36,9 +36,9 @@ namespace InferenceEngine
 
             foreach (Term t in Terms)
             {
-                if (t.isEntailed())
+                if (t.IsEntailed())
                 {
-                    returnString = returnString + t.getName() + ", ";
+                    returnString = returnString + t.GetName() + ", ";
                 }
             }
 

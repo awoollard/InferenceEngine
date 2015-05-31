@@ -19,7 +19,7 @@ namespace InferenceEngine
         public override bool Query(Term query)
         {
 
-            if (FetchTerm(query.getName()) == null)
+            if (FetchTerm(query.GetName()) == null)
                 return false;
 
             List<Term> forRemoval = new List<Term>();
@@ -42,16 +42,16 @@ namespace InferenceEngine
                         Term rhsTerm = FetchTerm(implication[implication.Length - 1]);
                         if(termCount<2)
                         {
-                            rhsTerm.setEntailed(true);
-                            rhsTerm.setExplored(true);
+                            rhsTerm.SetEntailed(true);
+                            rhsTerm.SetExplored(true);
                             if(!statementRemoval.Contains(statement)) statementRemoval.Add(statement);
                         }
                         else
                         {
                             // If Right-Hand-Side is term t
-                            if (rhsTerm.getName() == t.getName())
+                            if (rhsTerm.GetName() == t.GetName())
                             {
-                                rhsTerm.setExplored(true);
+                                rhsTerm.SetExplored(true);
                                 if (!forRemoval.Contains(t)) forRemoval.Add(t);
 
                                 // Add non-entailed terms on LHS to entailRequired
@@ -59,7 +59,7 @@ namespace InferenceEngine
                                 {
                                     // Set up parent child link
                                     FetchTerm(implication[i]).setChild(t); 
-                                    rhsTerm.addParent(FetchTerm(implication[i]));
+                                    rhsTerm.AddParent(FetchTerm(implication[i]));
                                     forAddition.Add(FetchTerm(implication[i]));
                                 }
                                 // Expansion complete, statement no longer needed
@@ -72,10 +72,10 @@ namespace InferenceEngine
                 applyEntailment();
 
                 // When query is entailed or no new implications have been made
-                if (FetchTerm(query.getName()).isEntailed() || (statementRemoval.Count == 0))
+                if (FetchTerm(query.GetName()).IsEntailed() || (statementRemoval.Count == 0))
                 {
                     checkComplete = true;
-                    query = FetchTerm(query.getName());
+                    query = FetchTerm(query.GetName());
                 }
 
                 // Add new terms to entailRequired
@@ -100,7 +100,7 @@ namespace InferenceEngine
                 statementRemoval.Clear();
 
             }
-            return query.isEntailed();
+            return query.IsEntailed();
         }
 
         private void applyEntailment()
@@ -108,18 +108,18 @@ namespace InferenceEngine
             // Any term without a parent or an entailed parent becomes entailed
             foreach (Term t in Terms)
             {
-                List<Term> parents = t.getParents();
+                List<Term> parents = t.GetParents();
                 if (parents.Count > 0)
                 {
-                    if (!t.isEntailed())
+                    if (!t.IsEntailed())
                     {
                         bool entailFlag = true;
 
                         // If any of the parents aren't entailed, t doesnt get entailed
                         foreach (Term p in parents)
-                            if (!p.isEntailed())
+                            if (!p.IsEntailed())
                                 entailFlag = false;
-                        t.setEntailed(entailFlag);
+                        t.SetEntailed(entailFlag);
                     }
                 }
             }

@@ -7,7 +7,6 @@ namespace InferenceEngine
         private bool entailed = false;
         private bool explored = false;
         private string name;
-        private Term child;
         private List<Term> parents;
     
         public Term()
@@ -17,58 +16,49 @@ namespace InferenceEngine
 
         public Term(string name)
         {
-            setName(name);
+            SetName(name);
             parents = new List<Term>();
         }
 
         public Term(string name,Term child)
         {
-            setName(name);
+            SetName(name);
         }
 
-        public bool isEntailed()
+        public bool IsEntailed()
         {
             return entailed;
         }
 
-        public void setEntailed(bool isEntailed)
+        public void SetEntailed(bool isEntailed)
         {
             this.entailed = isEntailed;
         }
 
-        public string getName()
+        public string GetName()
         {
             return name;
         }
 
-        public void setName(string name)
+        public void SetName(string name)
         {
             this.name = name;
         }
 
-        public void setChild(Term t)
-        {
-            this.child = t;
-        }
-        public Term getChild()
-        {
-            return child;
-        }
-
-        public void addParent(Term t)
+        public void AddParent(Term t)
         {
             parents.Add(t);
         }
-        public List<Term> getParents()
+        public List<Term> GetParents()
         {
             return parents;
         }
-        public bool isExplored()
+        public bool IsExplored()
         {
             return explored;
         }
 
-        public void setExplored(bool isExplored)
+        public void SetExplored(bool isExplored)
         {
             explored = isExplored;
         }

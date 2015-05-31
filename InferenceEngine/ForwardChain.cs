@@ -18,7 +18,7 @@ namespace InferenceEngine
         // Doesn't need to be bool, since now a term is passed it, entailed can be checked externally
         public override bool Query(Term query)
         {
-            if (FetchTerm(query.getName()) == null)
+            if (FetchTerm(query.GetName()) == null)
                 return false;
 
             // Allows marking statements for removal inside the foreach loop
@@ -45,24 +45,24 @@ namespace InferenceEngine
 
                         // Check if the Left-Hand-Side terms are entailed.
                         for (int i = 0; i < (termCount - 1); i++)
-                            if (FetchTerm(implication[i]).isEntailed())
+                            if (FetchTerm(implication[i]).IsEntailed())
                                 entailedTerms++;
 
                         // If all the Left-Hand-Side terms are entailed, set the Right-Hand-Side to entailed
                         if(entailedTerms == (termCount-1))
                         {
-                            FetchTerm(implication[termCount - 1]).setEntailed(true);
+                            FetchTerm(implication[termCount - 1]).SetEntailed(true);
                             forRemoval.Add(s);
 
-                            if (FetchTerm(implication[termCount - 1]).getName() == query.getName())
-                                query.setEntailed(true);
+                            if (FetchTerm(implication[termCount - 1]).GetName() == query.GetName())
+                                query.SetEntailed(true);
                         }
 
                     }
                 }
 
                 // When query is entailed or no new implications have been made
-                if (query.isEntailed() || (forRemoval.Count == 0))
+                if (query.IsEntailed() || (forRemoval.Count == 0))
                     checkComplete = true;
 
                 // Remove marked statements
@@ -70,7 +70,7 @@ namespace InferenceEngine
                     Statements.Remove(statement);
                 forRemoval.Clear();
             }
-            return query.isEntailed();
+            return query.IsEntailed();
         }
     }
 }

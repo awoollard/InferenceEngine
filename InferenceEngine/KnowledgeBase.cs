@@ -67,7 +67,7 @@ namespace InferenceEngine
             {
                 ForwardChain forwardChain = new ForwardChain(this.Statements, this.Terms);
                 forwardChain.Query(query);
-                if (query.isEntailed())
+                if (query.IsEntailed())
                 {
                     returnString = "YES: " + forwardChain.GetEntailedTermsString();
                 }
@@ -75,8 +75,8 @@ namespace InferenceEngine
             else if (method.ToUpper().Equals("BC"))
             {
                 BackwardsChain backwardsChain = new BackwardsChain(this.Statements, this.Terms);
-                query.setEntailed(backwardsChain.Query(query));
-                if (query.isEntailed())
+                query.SetEntailed(backwardsChain.Query(query));
+                if (query.IsEntailed())
                 {
                     returnString = "YES: " + backwardsChain.GetEntailedTermsString();
                 }
@@ -85,7 +85,7 @@ namespace InferenceEngine
             {
                 TruthTable truthTable = new TruthTable(this.Statements, this.Terms);
                 truthTable.Query(query);
-                if (query.isEntailed())
+                if (query.IsEntailed())
                 {
                     returnString = "YES: " + truthTable.HowManyTermsOrWhatever();
                 }
@@ -96,7 +96,7 @@ namespace InferenceEngine
                 returnString = "Unsupported method";
             }
 
-            if (!query.isEntailed())
+            if (!query.IsEntailed())
                 returnString = "NO";
 
             return returnString;
