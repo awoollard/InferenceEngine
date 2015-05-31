@@ -58,7 +58,7 @@ namespace InferenceEngine
                                 for (int i = 0; i < (termCount - 1); i++)
                                 {
                                     // Set up parent child link
-                                    FetchTerm(implication[i]).setChild(t); 
+                                    FetchTerm(implication[i]).SetChild(t); 
                                     rhsTerm.AddParent(FetchTerm(implication[i]));
                                     forAddition.Add(FetchTerm(implication[i]));
                                 }

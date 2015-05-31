@@ -7,6 +7,7 @@ namespace InferenceEngine
         private bool entailed = false;
         private bool explored = false;
         private string name;
+        private Term child;
         private List<Term> parents;
     
         public Term()
@@ -43,6 +44,11 @@ namespace InferenceEngine
         public void SetName(string name)
         {
             this.name = name;
+        }
+
+        public void SetChild(Term t)
+        {
+            this.child = t;
         }
 
         public void AddParent(Term t)
