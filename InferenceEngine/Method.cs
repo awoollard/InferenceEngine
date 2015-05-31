@@ -34,7 +34,7 @@ namespace InferenceEngine
             return null;
         }
 
-        virtual public string GetTermsOrWhatever()
+        virtual public string getEntailedTermsString()
         {
             string returnString = " ";
 

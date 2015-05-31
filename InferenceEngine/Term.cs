@@ -1,4 +1,6 @@
-﻿namespace InferenceEngine
+﻿using System.Collections.Generic;
+
+namespace InferenceEngine
 {
     class Term
     {
@@ -6,7 +8,7 @@
         private bool explored = false;
         private string name;
         private Term child;
-        private Term parent;
+        private List<Term> parents;
     
         public Term()
         {
@@ -16,6 +18,7 @@
         public Term(string name)
         {
             setName(name);
+            parents = new List<Term>();
         }
 
         public Term(string name,Term child)
@@ -52,13 +55,13 @@
             return child;
         }
 
-        public void setParent(Term t)
+        public void addParent(Term t)
         {
-            this.parent = t;
+            parents.Add(t);
         }
-        public Term getParent()
+        public List<Term> getParents()
         {
-            return parent;
+            return parents;
         }
         public bool isExplored()
         {
