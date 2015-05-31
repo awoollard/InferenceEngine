@@ -87,7 +87,7 @@ namespace InferenceEngine
                 truthTable.Query(query);
                 if (query.isEntailed())
                 {
-                    returnString = "YES: " + truthTable.HowManyTermsOrWhatever().ToString();
+                    returnString = "YES: " + truthTable.HowManyTermsOrWhatever();
                 }
             }
             else

@@ -26,11 +26,11 @@ namespace InferenceEngine
                return TT-CHECK-ALL(KB,α, symbols, { })
              */
             // ignore unioning term into statements because d already exists
-            return this.checkAll(Statements, query, Statements, null);
+            return this.checkAll(Statements, query, Statements /*, null*/);
         }
 
         // function TT-CHECK-ALL(KB,α, symbols, model) returns true or false
-        public bool checkAll(List<string> statements, string alpha, List<string> symbols /*, Model model*/)
+        public bool checkAll(List<string> statements, Term alpha, List<string> symbols /*, Model model*/)
         {
             /*
                 if EMPTY?(symbols) then
@@ -43,6 +43,7 @@ namespace InferenceEngine
                 and
                 TT-CHECK-ALL(KB,α, rest, model ∪ {P = false }))
              */
+            return true;
         }
 
         public int HowManyTermsOrWhatever()

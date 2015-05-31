@@ -45,7 +45,9 @@ namespace InferenceEngine
                     returnString = returnString + t.getName() + ", ";
                 }
             }
-            return returnString;
+
+            // Remove trailing comma character
+            return returnString.Remove(returnString.Length - 2);
         }
     }
 }
