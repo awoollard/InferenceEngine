@@ -25,7 +25,7 @@ namespace InferenceEngine
             return 42;
         }
 
-        public override string GetTermsOrWhatever()
+        public override string getEntailedTermsString()
         {
             // Doesn't need to be implemented in TT but should be overridden in case this method is ever called
             // Maybe just delete this once coding is completed and we're sure it's never called

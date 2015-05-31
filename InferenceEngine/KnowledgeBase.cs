@@ -69,16 +69,16 @@ namespace InferenceEngine
                 forwardChain.Query(query);
                 if (query.isEntailed())
                 {
-                    returnString = "YES: " + forwardChain.GetTermsOrWhatever();
+                    returnString = "YES: " + forwardChain.getEntailedTermsString();
                 }
             }
             else if (method.ToUpper().Equals("BC"))
             {
                 BackwardsChain backwardsChain = new BackwardsChain(this.Statements, this.Terms);
-                backwardsChain.Query(query);
+                query.setEntailed(backwardsChain.Query(query));
                 if (query.isEntailed())
                 {
-                    returnString = "YES: " + backwardsChain.GetTermsOrWhatever();
+                    returnString = "YES: " + backwardsChain.getEntailedTermsString();
                 }
             }
             else if (method.ToUpper().Equals("TT"))

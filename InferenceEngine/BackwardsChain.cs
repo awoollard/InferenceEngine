@@ -22,7 +22,7 @@ namespace InferenceEngine
 
             //(since at this stage only "=>" is supported, multiple parents need not be considered)
             //when we do implement multi parents we can do something like foreach (parent p in term.parents){//test for entailed}
-            //problem with that is if multiple statements imply the same term, it would require all sentences to be true in order to entail.
+            //problem with that is if multiple statements imply the same term, it would require all sentences to be true in order to entail
 
             if(FetchTerm(query.getName())==null)
             {
@@ -46,6 +46,7 @@ namespace InferenceEngine
                         int termCount = implication.Length;
 
                         Term rhsTerm = FetchTerm(implication[implication.Length - 1]);
+                        //forRemoval.Add(t);
                     
                         if(termCount<2)
                         {
@@ -55,31 +56,31 @@ namespace InferenceEngine
                         }
                         else
                         {
-                            
                             if (rhsTerm.getName() == t.getName())//if RHS is term t
                             {
                                 rhsTerm.setExplored(true);
-                                if (!forRemoval.Contains(rhsTerm)) forRemoval.Add(rhsTerm);
+                                if (!forRemoval.Contains(t)) forRemoval.Add(t);
 
                                 //Add non-entailed terms on LHS to entailRequired
                                 for (int i = 0; i < (termCount - 1); i++)
                                 {
                                     //set up parent child link
                                     FetchTerm(implication[i]).setChild(t); 
-                                    rhsTerm.setParent(FetchTerm(implication[i]));
+                                    rhsTerm.addParent(FetchTerm(implication[i]));
                                     forAddition.Add(FetchTerm(implication[i]));
                                 }
                                 statementRemoval.Add(statement);//expansion complete, statement no longer needed
                             }
                         }
-                    }
-                }
+                    }//end foreach statement
+                }//end foreach term
 
                 applyEntailment();
 
                 if (FetchTerm(query.getName()).isEntailed() || (statementRemoval.Count == 0))//when q is entailed or no new implications have been made
                 {
                     checkComplete = true;
+                    query = FetchTerm(query.getName());
                 }
 
                 //add new terms to entailRequired
@@ -92,7 +93,7 @@ namespace InferenceEngine
                 //remove marked terms
                 foreach (Term t in forRemoval)//issues here, doesnt remove d? seems to create a new instance of entailREquired and doesnt edit it
                 {
-                    this.entailRequired.Remove(t);
+                    entailRequired.Remove(t);
                 }
                 forRemoval.Clear();
 
@@ -111,16 +112,23 @@ namespace InferenceEngine
         {
             foreach (Term t in Terms)
             {
-                if (!t.isEntailed())
+                List<Term> parents = t.getParents();
+                if (parents.Count > 0)
                 {
-                    if ((t.getParent() != null) && t.getParent().isEntailed())
+                    if (!t.isEntailed())
                     {
-                        t.setEntailed(true);
+                        bool entailFlag = true;
+
+                        //if any of the parents aren't entailed, t doesnt get entailed
+                        foreach (Term p in parents)
+                        {
+                            if (!p.isEntailed())
+                            {
+                                entailFlag = false;
+                            }
+                        }
+                        t.setEntailed(entailFlag);
                     }
-                }
-                else if ((t.getChild() != null))
-                {
-                    t.getChild().setEntailed(true);
                 }
             }
         }
