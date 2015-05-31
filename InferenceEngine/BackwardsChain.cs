@@ -18,16 +18,14 @@ namespace InferenceEngine
 
         public override bool Query(Term query)
         {
-            //Latest parent added overwrites previous parent
+            // Latest parent added overwrites previous parent
 
-            //(since at this stage only "=>" is supported, multiple parents need not be considered)
-            //when we do implement multi parents we can do something like foreach (parent p in term.parents){//test for entailed}
-            //problem with that is if multiple statements imply the same term, it would require all sentences to be true in order to entail
+            // (since at this stage only "=>" is supported, multiple parents need not be considered)
+            // When we do implement multi parents we can do something like foreach (parent p in term.parents){//test for entailed}
+            // Problem with that is if multiple statements imply the same term, it would require all sentences to be true in order to entail
 
-            if(FetchTerm(query.getName())==null)
-            {
+            if (FetchTerm(query.getName()) == null)
                 return false;
-            }
 
             List<Term> forRemoval = new List<Term>();
             List<Term> forAddition = new List<Term>();
@@ -41,13 +39,12 @@ namespace InferenceEngine
                 {
                     foreach(string statement in Statements)
                     {
-                        string[] termDelimiters = { "=>", "&" };//break the string into pieces between these things.
-                        string[] implication = statement.Split((termDelimiters), StringSplitOptions.RemoveEmptyEntries);//StringSplitOptions.RemoveEmptyEntries
+                        // Break the string into pieces between these delimiters.
+                        string[] termDelimiters = { "=>", "&" };
+                        string[] implication = statement.Split((termDelimiters), StringSplitOptions.RemoveEmptyEntries);
                         int termCount = implication.Length;
 
                         Term rhsTerm = FetchTerm(implication[implication.Length - 1]);
-                        //forRemoval.Add(t);
-                    
                         if(termCount<2)
                         {
                             rhsTerm.setEntailed(true);
@@ -56,48 +53,51 @@ namespace InferenceEngine
                         }
                         else
                         {
-                            if (rhsTerm.getName() == t.getName())//if RHS is term t
+                            // If Right-Hand-Side is term t
+                            if (rhsTerm.getName() == t.getName())
                             {
                                 rhsTerm.setExplored(true);
                                 if (!forRemoval.Contains(t)) forRemoval.Add(t);
 
-                                //Add non-entailed terms on LHS to entailRequired
+                                // Add non-entailed terms on LHS to entailRequired
                                 for (int i = 0; i < (termCount - 1); i++)
                                 {
-                                    //set up parent child link
+                                    // Set up parent child link
                                     FetchTerm(implication[i]).setChild(t); 
                                     rhsTerm.addParent(FetchTerm(implication[i]));
                                     forAddition.Add(FetchTerm(implication[i]));
                                 }
-                                statementRemoval.Add(statement);//expansion complete, statement no longer needed
+                                // Expansion complete, statement no longer needed
+                                statementRemoval.Add(statement);
                             }
                         }
-                    }//end foreach statement
-                }//end foreach term
+                    }
+                }
 
                 applyEntailment();
 
-                if (FetchTerm(query.getName()).isEntailed() || (statementRemoval.Count == 0))//when q is entailed or no new implications have been made
+                // When query is entailed or no new implications have been made
+                if (FetchTerm(query.getName()).isEntailed() || (statementRemoval.Count == 0))
                 {
                     checkComplete = true;
                     query = FetchTerm(query.getName());
                 }
 
-                //add new terms to entailRequired
+                // Add new terms to entailRequired
                 foreach (Term t in forAddition)
                 {
                     entailRequired.Add(t);
                 }
                 forAddition.Clear();
 
-                //remove marked terms
+                // Remove marked terms
                 foreach (Term t in forRemoval)//issues here, doesnt remove d? seems to create a new instance of entailREquired and doesnt edit it
                 {
                     entailRequired.Remove(t);
                 }
                 forRemoval.Clear();
 
-                //remove marked statements
+                // Remove marked statements
                 foreach (string statement in statementRemoval)
                 {
                     Statements.Remove(statement);
@@ -108,8 +108,9 @@ namespace InferenceEngine
             return query.isEntailed();
         }
 
-        private void applyEntailment()//any term without a parent or an entailed parent becomes entailed
+        private void applyEntailment()
         {
+            // Any term without a parent or an entailed parent becomes entailed
             foreach (Term t in Terms)
             {
                 List<Term> parents = t.getParents();
@@ -119,14 +120,10 @@ namespace InferenceEngine
                     {
                         bool entailFlag = true;
 
-                        //if any of the parents aren't entailed, t doesnt get entailed
+                        // If any of the parents aren't entailed, t doesnt get entailed
                         foreach (Term p in parents)
-                        {
                             if (!p.isEntailed())
-                            {
                                 entailFlag = false;
-                            }
-                        }
                         t.setEntailed(entailFlag);
                     }
                 }

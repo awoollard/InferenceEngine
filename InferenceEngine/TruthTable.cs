@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.SymbolStore;
-using System.Linq;
 
 namespace InferenceEngine
 {
@@ -26,11 +24,11 @@ namespace InferenceEngine
                return TT-CHECK-ALL(KB,α, symbols, { })
              */
             // ignore unioning term into statements because d already exists
-            return this.checkAll(Statements, query, Statements /*, null*/);
+            return this.CheckAll(Statements, query, Statements /*, null*/);
         }
 
         // function TT-CHECK-ALL(KB,α, symbols, model) returns true or false
-        public bool checkAll(List<string> statements, Term alpha, List<string> symbols /*, Model model*/)
+        public bool CheckAll(List<string> statements, Term alpha, List<string> symbols /*, Model model*/)
         {
             /*
                 if EMPTY?(symbols) then
@@ -51,7 +49,7 @@ namespace InferenceEngine
             return 0;
         }
 
-        public override string getEntailedTermsString()
+        public override string GetEntailedTermsString()
         {
             // Doesn't need to be implemented in TT but should be overridden in case this method is ever called
             throw new NotImplementedException();

@@ -15,66 +15,59 @@ namespace InferenceEngine
             // No custom functionality in constructor; inherits Method constructor
         }
 
-        public override bool Query(Term query)//doesn't need to be bool, since now a term is passed it, entailed can be checked externally
+        // Doesn't need to be bool, since now a term is passed it, entailed can be checked externally
+        public override bool Query(Term query)
         {
             if (FetchTerm(query.getName()) == null)
-            {
                 return false;
-            }
 
-            List<string> forRemoval = new List<string>(); //Allows marking statements for removal inside the foreach loop
-                                                          //Anytime a new entailment is established, the current statement should be added to this list
+            // Allows marking statements for removal inside the foreach loop
+            // Anytime a new entailment is established, the current statement should be added to forRemoval list
+            List<string> forRemoval = new List<string>();   
             bool checkComplete = false;
 
             while (checkComplete == false)
             {
                 foreach (string s in Statements)
                 {
-                    if (!s.Contains("=>") && !s.Contains("&"))//if the statement is a single term, set the term with that name to entailed
+                    // If the statement is a single term, set the term with that name to entailed
+                    if (!s.Contains("=>") && !s.Contains("&"))
                     {
                         SetEntailed(s);
                         forRemoval.Add(s);
                     }
-                    else //checks LHS terms entailed status and infer RHS entailed status. 
+                    else // Checks Left-Hand-Side terms entailed status and infer Right-Hand-Side entailed status. 
                     {
                         string[] termDelimiters = { "=>", "&" };//break the string into pieces between these things.
-                        string[] implication = s.Split((termDelimiters),StringSplitOptions.RemoveEmptyEntries);//StringSplitOptions.RemoveEmptyEntries
+                        string[] implication = s.Split((termDelimiters), StringSplitOptions.RemoveEmptyEntries);
                         int termCount = implication.Length;
                         int entailedTerms = 0;
 
-                        //check if the LHS terms are entailed.
-                        for (int i = 0; i < (termCount-1); i++)
-                        {
-                            if(FetchTerm(implication[i]).isEntailed())
-                            {
+                        // Check if the Left-Hand-Side terms are entailed.
+                        for (int i = 0; i < (termCount - 1); i++)
+                            if (FetchTerm(implication[i]).isEntailed())
                                 entailedTerms++;
-                            }
-                        }
 
-                        //if all the LHS terms are entailed, set the RHS to entailed
+                        // If all the Left-Hand-Side terms are entailed, set the Right-Hand-Side to entailed
                         if(entailedTerms == (termCount-1))
                         {
                             FetchTerm(implication[termCount - 1]).setEntailed(true);
                             forRemoval.Add(s);
 
                             if (FetchTerm(implication[termCount - 1]).getName() == query.getName())
-                            {
                                 query.setEntailed(true);
-                            }
                         }
 
                     }
                 }
 
-                if (query.isEntailed() || (forRemoval.Count==0))//when q is entailed or no new implications have been made
-                {
+                // When query is entailed or no new implications have been made
+                if (query.isEntailed() || (forRemoval.Count == 0))
                     checkComplete = true;
-                }
 
-                foreach (string statement in forRemoval)//remove marked statements
-                {
+                // Remove marked statements
+                foreach (string statement in forRemoval)
                     Statements.Remove(statement);
-                }
                 forRemoval.Clear();
             }
             return query.isEntailed();

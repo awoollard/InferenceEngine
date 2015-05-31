@@ -69,7 +69,7 @@ namespace InferenceEngine
                 forwardChain.Query(query);
                 if (query.isEntailed())
                 {
-                    returnString = "YES: " + forwardChain.getEntailedTermsString();
+                    returnString = "YES: " + forwardChain.GetEntailedTermsString();
                 }
             }
             else if (method.ToUpper().Equals("BC"))
@@ -78,7 +78,7 @@ namespace InferenceEngine
                 query.setEntailed(backwardsChain.Query(query));
                 if (query.isEntailed())
                 {
-                    returnString = "YES: " + backwardsChain.getEntailedTermsString();
+                    returnString = "YES: " + backwardsChain.GetEntailedTermsString();
                 }
             }
             else if (method.ToUpper().Equals("TT"))
