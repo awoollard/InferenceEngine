@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.SymbolStore;
+using System.Linq;
 
 namespace InferenceEngine
 {
@@ -15,20 +17,42 @@ namespace InferenceEngine
             // No custom functionality in constructor; inherits Method constructor
         }
 
+        // function TT-ENTAILS?(KB,α) returns true or false
+        // inputs: KB, the knowledge base, a sentence in propositional logic
+        // α, the query, a sentence in propositional logic
         public override bool Query(Term query)
         {
-            return true;
+            /* symbols ← a list of the proposition symbols in KB and α
+               return TT-CHECK-ALL(KB,α, symbols, { })
+             */
+            // ignore unioning term into statements because d already exists
+            return this.checkAll(Statements, query, Statements, null);
+        }
+
+        // function TT-CHECK-ALL(KB,α, symbols, model) returns true or false
+        public bool checkAll(List<string> statements, string alpha, List<string> symbols /*, Model model*/)
+        {
+            /*
+                if EMPTY?(symbols) then
+                if PL-TRUE?(KB, model) then return PL-TRUE?(α, model)
+                else return true // when KB is false, always return true
+                else do
+                P ← FIRST(symbols)
+                rest ← REST(symbols)
+                return (TT-CHECK-ALL(KB,α, rest, model ∪ {P = true})
+                and
+                TT-CHECK-ALL(KB,α, rest, model ∪ {P = false }))
+             */
         }
 
         public int HowManyTermsOrWhatever()
         {
-            return 42;
+            return 0;
         }
 
         public override string getEntailedTermsString()
         {
             // Doesn't need to be implemented in TT but should be overridden in case this method is ever called
-            // Maybe just delete this once coding is completed and we're sure it's never called
             throw new NotImplementedException();
         }
     }
