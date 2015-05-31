@@ -18,11 +18,6 @@ namespace InferenceEngine
 
         public override bool Query(Term query)
         {
-            // Latest parent added overwrites previous parent
-
-            // (since at this stage only "=>" is supported, multiple parents need not be considered)
-            // When we do implement multi parents we can do something like foreach (parent p in term.parents){//test for entailed}
-            // Problem with that is if multiple statements imply the same term, it would require all sentences to be true in order to entail
 
             if (FetchTerm(query.getName()) == null)
                 return false;
