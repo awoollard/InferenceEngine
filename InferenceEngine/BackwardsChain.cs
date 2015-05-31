@@ -18,21 +18,16 @@ namespace InferenceEngine
 
         public override bool Query(Term query)
         {
-            //Query
-            //-----
-            //looks at all the terms which need entailing to reach q (starting with q), 
-            //it checks for statements where term t is implied.
-            //if statement is single term t, t set to entailed.
-            //if not, LHS terms are linked as parents to t, t is set as child to LHS terms(to allow entailment chains later)
-            //adds the LHS of that statement to entailRequired.
-            //removes statement from Statements
+            //Latest parent added overwrites previous parent
 
-            //Does add multiple parents for one term but doesnt support "&" yet.
-
-            //***to add: in a different loop?: need to check entailRequired for entailed terms.
-            //remove entailed terms from entailRequired and make their children entailed
             //(since at this stage only "=>" is supported, multiple parents need not be considered)
             //when we do implement multi parents we can do something like foreach (parent p in term.parents){//test for entailed}
+            //problem with that is if multiple statements imply the same term, it would require all sentences to be true in order to entail.
+
+            if(FetchTerm(query.getName())==null)
+            {
+                return false;
+            }
 
             List<Term> forRemoval = new List<Term>();
             List<Term> forAddition = new List<Term>();

@@ -17,6 +17,10 @@ namespace InferenceEngine
 
         public override bool Query(Term query)//doesn't need to be bool, since now a term is passed it, entailed can be checked externally
         {
+            if (FetchTerm(query.getName()) == null)
+            {
+                return false;
+            }
 
             List<string> forRemoval = new List<string>(); //Allows marking statements for removal inside the foreach loop
                                                           //Anytime a new entailment is established, the current statement should be added to this list
